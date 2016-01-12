@@ -5,6 +5,7 @@
 
 	<bean id="evernoteClientManager" class="com.molecode.w2k.fetcher.evernote.EvernoteClientManager">
 		<property name="userCredentialDao" ref="userCredentialDao" />
+		<property name="evernoteService" value="SANDBOX" />
 	</bean>
 
 	<bean id="evernoteOAuthService" class="com.molecode.w2k.services.impl.OAuthServiceImpl">
