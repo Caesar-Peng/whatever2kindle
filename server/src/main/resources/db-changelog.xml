@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="W2K-1" author="YP" dbms="mysql">
+		<createTable tableName="user_credential">
+			<column name="user_id" autoIncrement="true" type="INT">
+				<constraints primaryKey="true" primaryKeyName="user_credential_PK" />
+			</column>
+			<column name="article_source" type="VARCHAR(25)">
+				<constraints nullable="false" />
+			</column>
+			<column name="username" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="password" type="VARCHAR(255)" />
+		</createTable>
+		<createIndex tableName="user_credential" indexName="user_credential_source_name_idx">
+			<column name="article_source" />
+			<column name="username" />
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>

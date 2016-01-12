@@ -1,0 +1,20 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:component-scan base-package="com.molecode.w2k.resources" />
+	<context:property-placeholder location="classpath:source_info.properties" />
+
+	<bean id="userCredentialDao" class="com.molecode.w2k.daos.impl.UserCredentialDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="articleTransferService" class="com.molecode.w2k.services.impl.ArticleTransferServiceImpl"></bean>
+	
+	<import resource="spring-evernote-components.xml" />
+
+</beans>
