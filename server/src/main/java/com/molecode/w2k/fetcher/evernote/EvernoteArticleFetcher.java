@@ -27,6 +27,10 @@ public class EvernoteArticleFetcher implements ArticleFetcher {
 		this.noteGuid = noteGuid;
 		this.evernoteClient = evernoteClient;
 		this.articleWriter = articleWriter;
+		File evernoteDir = new File(EVERNOTE_DIR);
+		if (!evernoteDir.exists()) {
+			evernoteDir.mkdirs();
+		}
 	}
 
 	@Override
