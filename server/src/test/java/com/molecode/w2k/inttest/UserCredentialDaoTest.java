@@ -63,8 +63,14 @@ public class UserCredentialDaoTest {
 	public void testQueryUserCredential() throws Exception {
 
 		UserCredential userCredential = new UserCredential(null, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
-
 		userCredentialDao.insertUserCredential(userCredential);
+
+		UserCredential userCredentialQueried = userCredentialDao.loadUserCredential(ArticleSource.EVERNOTE, USERNAME);
+
+		assertNotNull(userCredentialQueried);
+		assertEquals(userCredential.getArticleSource(), userCredentialQueried.getArticleSource());
+		assertEquals(userCredential.getUsername(), userCredentialQueried.getUsername());
+		assertEquals(userCredential.getPassword(), userCredentialQueried.getPassword());
 
 	}
 
