@@ -13,7 +13,14 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="articleTransferService" class="com.molecode.w2k.services.impl.ArticleTransferServiceImpl"></bean>
+	<bean id="articleTransferService" class="com.molecode.w2k.services.impl.ArticleTransferServiceImpl">
+		<property name="kindleGenerator">
+			<bean class="com.molecode.w2k.kindle.KindleGenerator" />
+		</property>
+		<property name="emailService">
+			<bean class="com.molecode.w2k.services.impl.EmailServiceImpl" />
+		</property>
+	</bean>
 	
 	<import resource="spring-evernote-components.xml" />
 
