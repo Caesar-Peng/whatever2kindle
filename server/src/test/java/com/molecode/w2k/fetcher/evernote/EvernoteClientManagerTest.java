@@ -1,5 +1,6 @@
 package com.molecode.w2k.fetcher.evernote;
 
+import com.evernote.auth.EvernoteService;
 import com.molecode.w2k.daos.UserCredentialDao;
 import com.molecode.w2k.fetcher.ArticleSource;
 import com.molecode.w2k.models.UserCredential;
@@ -29,6 +30,7 @@ public class EvernoteClientManagerTest {
 		MockitoAnnotations.initMocks(this);
 		evernoteClientManager = new EvernoteClientManager();
 		evernoteClientManager.setUserCredentialDao(userCredentialDao);
+		evernoteClientManager.setEvernoteService(EvernoteService.SANDBOX);
 		userCredential = new UserCredential(USER_ID, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
 	}
 

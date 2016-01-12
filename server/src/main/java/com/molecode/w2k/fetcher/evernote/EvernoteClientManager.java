@@ -1,8 +1,10 @@
 package com.molecode.w2k.fetcher.evernote;
 
+import com.evernote.auth.EvernoteService;
 import com.molecode.w2k.daos.UserCredentialDao;
 import com.molecode.w2k.fetcher.ArticleSource;
 import com.molecode.w2k.models.UserCredential;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +16,16 @@ public class EvernoteClientManager {
 
 	private UserCredentialDao userCredentialDao;
 
+	private EvernoteService evernoteService;
+
+	@Required
 	public void setUserCredentialDao(UserCredentialDao userCredentialDao) {
 		this.userCredentialDao = userCredentialDao;
+	}
+
+	@Required
+	public void setEvernoteService(EvernoteService evernoteService) {
+		this.evernoteService = evernoteService;
 	}
 
 	private Map<String, EvernoteClient> clientMap = new HashMap<>();
@@ -28,7 +38,7 @@ public class EvernoteClientManager {
 			} else {
 				UserCredential userCredential = userCredentialDao.loadUserCredential(ArticleSource.EVERNOTE, username);
 				if (userCredential != null) {
-					client = new EvernoteClient(userCredential.getUsername(), userCredential.getPassword());
+					client = new EvernoteClient(userCredential.getPassword(), evernoteService);
 					clientMap.put(username, client);
 				}
 			}
