@@ -53,7 +53,7 @@ public class UserCredentialDaoTest {
 		userCredentialDao.insertUserCredential(userCredential);
 
 		int recordCount = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate,
-				"user_credential", "article_source = '" + ArticleSource.EVERNOTE.getSourceId()
+				"user_credential", "article_source = '" + ArticleSource.EVERNOTE.name()
 						+ "' AND username = '" + USERNAME + "' AND password = '" + PASSWORD + "'");
 
 		assertEquals(1, recordCount);

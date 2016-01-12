@@ -30,7 +30,7 @@ public class UserCredentialDaoImpl implements UserCredentialDao {
 
 		String sql = "INSERT INTO user_credential (article_source, username, password) VALUES (:article_source, :username, :password)";
 		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("article_source", userCredential.getArticleSource().getSourceId());
+		parameterMap.put("article_source", userCredential.getArticleSource().name());
 		parameterMap.put("username", userCredential.getUsername());
 		parameterMap.put("password", userCredential.getPassword());
 		jdbcTemplate.update(sql, parameterMap);
