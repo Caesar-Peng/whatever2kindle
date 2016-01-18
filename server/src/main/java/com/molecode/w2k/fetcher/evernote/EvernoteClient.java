@@ -7,7 +7,16 @@ import com.evernote.clients.NoteStoreClient;
 import com.evernote.edam.error.EDAMNotFoundException;
 import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
+import com.evernote.edam.type.Note;
 import com.evernote.thrift.TException;
+import com.syncthemall.enml4j.ENMLProcessor;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Created by YP on 2015-12-29.
@@ -16,7 +25,11 @@ public class EvernoteClient {
 
 	private NoteStoreClient noteStoreClient;
 
-	public EvernoteClient(String password, EvernoteService evernoteService) {
+	private final String outputDir;
+
+	private final ENMLProcessor enmlProcessor;
+
+	public EvernoteClient(String password, EvernoteService evernoteService, String outputDir, ENMLProcessor enmlProcessor) {
 		EvernoteAuth evernoteAuth = new EvernoteAuth(evernoteService, password);
 		ClientFactory clientFactory = new ClientFactory(evernoteAuth);
 		try {
@@ -28,11 +41,16 @@ public class EvernoteClient {
 		} catch (TException e) {
 			e.printStackTrace();
 		}
+		this.outputDir = outputDir;
+		this.enmlProcessor = enmlProcessor;
 	}
 
-	public String fetchNoteContent(String noteGuid) {
+	public File fetchNoteContent(String noteGuid) {
+		File htmlFile = null;
 		try {
-			return noteStoreClient.getNoteContent(noteGuid);
+			Note note = noteStoreClient.getNote(noteGuid, true, true, false, false);
+			htmlFile = new File(outputDir + note.getGuid() + ".html");
+			enmlProcessor.noteToInlineHTML(note, new FileOutputStream(htmlFile)).close();
 		} catch (EDAMUserException e) {
 			e.printStackTrace();
 		} catch (EDAMSystemException e) {
@@ -41,7 +59,13 @@ public class EvernoteClient {
 			e.printStackTrace();
 		} catch (TException e) {
 			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return null;
+		return htmlFile;
 	}
 }

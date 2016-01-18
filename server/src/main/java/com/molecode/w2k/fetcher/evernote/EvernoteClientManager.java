@@ -4,8 +4,10 @@ import com.evernote.auth.EvernoteService;
 import com.molecode.w2k.daos.UserCredentialDao;
 import com.molecode.w2k.fetcher.ArticleSource;
 import com.molecode.w2k.models.UserCredential;
+import com.syncthemall.enml4j.ENMLProcessor;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,9 +16,21 @@ import java.util.Map;
  */
 public class EvernoteClientManager {
 
+	private static final String EVERNOTE_DIR = "temp_file/evernote/";
+
 	private UserCredentialDao userCredentialDao;
 
 	private EvernoteService evernoteService;
+
+	private final ENMLProcessor enmlProcessor;
+
+	public EvernoteClientManager() {
+		enmlProcessor = new ENMLProcessor();
+		File evernoteDir = new File(EVERNOTE_DIR);
+		if (!evernoteDir.exists()) {
+			evernoteDir.mkdirs();
+		}
+	}
 
 	@Required
 	public void setUserCredentialDao(UserCredentialDao userCredentialDao) {
@@ -38,7 +52,7 @@ public class EvernoteClientManager {
 			} else {
 				UserCredential userCredential = userCredentialDao.loadUserCredential(ArticleSource.EVERNOTE, username);
 				if (userCredential != null) {
-					client = new EvernoteClient(userCredential.getPassword(), evernoteService);
+					client = new EvernoteClient(userCredential.getPassword(), evernoteService, EVERNOTE_DIR, enmlProcessor);
 					clientMap.put(username, client);
 				}
 			}
