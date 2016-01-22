@@ -5,7 +5,7 @@
 
 	<changeSet id="W2K-1" author="YP" dbms="mysql">
 		<createTable tableName="user_credential">
-			<column name="user_id" autoIncrement="true" type="INT">
+			<column name="user_id" autoIncrement="true" type="INT(11)">
 				<constraints primaryKey="true" primaryKeyName="user_credential_PK" />
 			</column>
 			<column name="article_source" type="VARCHAR(25)">
@@ -20,6 +20,28 @@
 			<column name="article_source" />
 			<column name="username" />
 		</createIndex>
+	</changeSet>
+	
+	<changeSet id="W2K-2" author="YP" dbms="mysql">
+		<sql>
+			ALTER TABLE user_credential CHANGE user_id credential_id INT(11) NOT NULL AUTO_INCREMENT;
+		</sql>
+		<createTable tableName="user">
+			<column name="user_id" autoIncrement="true" type="INT(11)">
+				<constraints primaryKey="true" primaryKeyName="user_PK" />
+			</column>
+			<column name="kindle_email" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" uniqueConstraintName="user_kindle_email_UK"/>
+			</column>
+		</createTable>
+		<dropIndex tableName="user_credential" indexName="user_credential_source_name_idx" />
+		<addColumn tableName="user_credential">
+			<column name="ref_user_id" type="INT(11)" />
+		</addColumn>
+		<addForeignKeyConstraint baseTableName="user_credential" baseColumnNames="ref_user_id"
+								 constraintName="user_credential_user_FK" referencedTableName="user"
+								 referencedColumnNames="user_id" />
+		<addUniqueConstraint tableName="user_credential" columnNames="article_source, username, ref_user_id" constraintName="user_credential_unique_idx" />
 	</changeSet>
 
 </databaseChangeLog>

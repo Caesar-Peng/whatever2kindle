@@ -2,11 +2,14 @@ package com.molecode.w2k.services.impl;
 
 import com.molecode.w2k.daos.UserCredentialDao;
 import com.molecode.w2k.fetcher.ArticleSource;
+import com.molecode.w2k.models.User;
 import com.molecode.w2k.models.UserCredential;
 import com.molecode.w2k.oauth.OAuthAssistant;
 import com.molecode.w2k.services.OAuthService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -40,19 +43,21 @@ public class OAuthServiceImplTest {
 
 	@Test
 	public void testGenerateOAuthRequestURI() throws URISyntaxException {
-		when(oAuthAssistant.generateAuthorizeURI()).thenReturn(new URI(OAUTH_REQUEST_URI));
+		when(oAuthAssistant.generateAuthorizeURI()).thenReturn(Pair.of(OAUTH_TEMPORARY_TOKEN, new URI(OAUTH_REQUEST_URI)));
 
-		URI requestURI = oAuthService.generateOAuthRequestURI();
+		URI requestURI = oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS);
 
 		verify(oAuthAssistant).generateAuthorizeURI();
 		assertEquals(OAUTH_REQUEST_URI, requestURI.toString());
 	}
 
 	@Test
-	public void testGenerateOAuthRequestURIFailed() {
+	public void testGenerateOAuthRequestURIFailedToGenerateURI() {
+		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+		when(userCredentialDao.insertUserOrSelectUserId(userCaptor.capture())).thenReturn(USER_ID);
 		when(oAuthAssistant.generateAuthorizeURI()).thenReturn(null);
 
-		URI requestURI = oAuthService.generateOAuthRequestURI();
+		URI requestURI = oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS);
 
 		verify(oAuthAssistant).generateAuthorizeURI();
 		assertNull(requestURI);
@@ -60,25 +65,40 @@ public class OAuthServiceImplTest {
 
 	@Test
 	public void testRetrieveAndStoreCredential() throws Exception {
-		UserCredential userCredential = new UserCredential(USER_ID, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
+		generateOAuthRequestURIForRetrieveCredential();
+
+		ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+		when(userCredentialDao.insertUserOrSelectUserId(any(User.class))).thenReturn(USER_ID);
+		UserCredential userCredential = new UserCredential(USER_CREDENTIAL_ID, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
 		when(oAuthAssistant.retrieveCredential(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE)).thenReturn(userCredential);
 
 		OAuthService.AuthorizationResult result = oAuthService.retrieveAndStoreAccessToken(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE);
 
-		verify(oAuthAssistant).retrieveCredential(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE);
 		verify(userCredentialDao).insertUserCredential(userCredential);
+		verify(userCredentialDao).insertUserOrSelectUserId(userArgumentCaptor.capture());
 
+		User user = userArgumentCaptor.getValue();
+		assertEquals(KINDLE_EMAIL_ADDRESS, user.getKindleEmail());
+		assertEquals(USER_ID, userCredential.getUserId());
 		assertTrue(result.isSucceed());
 		assertNull(result.getMessage());
 	}
 
+	private void generateOAuthRequestURIForRetrieveCredential() throws URISyntaxException {
+		URI authorizationURI = new URI(OAUTH_REQUEST_URI);
+		when(oAuthAssistant.generateAuthorizeURI()).thenReturn(Pair.of(OAUTH_TEMPORARY_TOKEN, authorizationURI));
+		oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS);
+	}
+
 	@Test
 	public void testRetrieveAndStoreCredentialFailedRetrieve() throws Exception {
+		generateOAuthRequestURIForRetrieveCredential();
 		when(oAuthAssistant.retrieveCredential(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE)).thenReturn(null);
 
 		OAuthService.AuthorizationResult result = oAuthService.retrieveAndStoreAccessToken(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE);
 
 		verify(oAuthAssistant).retrieveCredential(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE);
+		verify(userCredentialDao, never()).insertUserOrSelectUserId(any(User.class));
 		verify(userCredentialDao, never()).insertUserCredential(any(UserCredential.class));
 
 		assertFalse(result.isSucceed());
@@ -88,7 +108,8 @@ public class OAuthServiceImplTest {
 
 	@Test
 	public void testRetrieveAndStoreCredentialFailedStore() throws Exception {
-		UserCredential userCredential = new UserCredential(USER_ID, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
+		generateOAuthRequestURIForRetrieveCredential();
+		UserCredential userCredential = new UserCredential(USER_CREDENTIAL_ID, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
 		when(oAuthAssistant.retrieveCredential(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE)).thenReturn(userCredential);
 		doThrow(new Exception()).when(userCredentialDao).insertUserCredential(userCredential);
 

@@ -8,7 +8,8 @@ import java.io.File;
  * Created by YP on 2016-01-12.
  */
 public class EmailServiceImpl implements EmailService {
-	@Override public void deliverArticle(File kindleFile) {
+	@Override
+	public void deliverArticle(String kindleEmail, File kindleFile) {
 
 	}
 }

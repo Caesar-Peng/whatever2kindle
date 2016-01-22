@@ -1,6 +1,7 @@
 package com.molecode.w2k.daos;
 
 import com.molecode.w2k.fetcher.ArticleSource;
+import com.molecode.w2k.models.User;
 import com.molecode.w2k.models.UserCredential;
 
 /**
@@ -10,4 +11,8 @@ public interface UserCredentialDao {
 	UserCredential loadUserCredential(ArticleSource evernote, String username);
 
 	void insertUserCredential(UserCredential userCredential) throws Exception;
+
+	Integer insertUserOrSelectUserId(User user);
+
+	String queryKindleEmail(ArticleSource articleSource, String username);
 }

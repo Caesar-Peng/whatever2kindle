@@ -6,5 +6,5 @@ import java.io.File;
  * Created by YP on 2015-12-28.
  */
 public interface EmailService {
-	void deliverArticle(File kindleFile);
+	void deliverArticle(String kindleEmail, File kindleFile);
 }

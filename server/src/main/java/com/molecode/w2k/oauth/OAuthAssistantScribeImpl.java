@@ -78,11 +78,11 @@ public class OAuthAssistantScribeImpl implements OAuthAssistant {
 	}
 
 	@Override
-	public URI generateAuthorizeURI() {
+	public Pair<String, URI> generateAuthorizeURI() {
 		Token requestToken = oAuthService.getRequestToken();
 		requestTokenCache.put(requestToken.getToken(), requestToken);
 		try {
-			return new URI(oAuthService.getAuthorizationUrl(requestToken));
+			return Pair.of(requestToken.getToken(), new URI(oAuthService.getAuthorizationUrl(requestToken)));
 		} catch (URISyntaxException e) {
 			LOG.error("Tried to build a wrong URI", e);
 		}

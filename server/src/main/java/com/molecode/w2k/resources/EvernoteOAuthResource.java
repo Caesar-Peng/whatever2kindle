@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -32,10 +34,10 @@ public class EvernoteOAuthResource {
 		this.oAuthService = oAuthService;
 	}
 
-	@GET
+	@POST
 	@Path("/request_authorization")
-	public Response requestAuthorization() {
-		URI authorizationUrl = oAuthService.generateOAuthRequestURI();
+	public Response requestAuthorization(@FormParam("kindle_email") String kindleEmail) {
+		URI authorizationUrl = oAuthService.generateOAuthRequestURI(kindleEmail);
 		return Response.seeOther(authorizationUrl).status(Response.Status.MOVED_PERMANENTLY).build();
 	}
 

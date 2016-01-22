@@ -6,7 +6,7 @@ import java.net.URI;
  * Created by YP on 2016-01-06.
  */
 public interface OAuthService {
-	URI generateOAuthRequestURI();
+	URI generateOAuthRequestURI(String kindleEmail);
 
 	AuthorizationResult retrieveAndStoreAccessToken(String temporaryToken, String verifierValue);
 

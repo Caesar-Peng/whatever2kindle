@@ -1,6 +1,7 @@
 package com.molecode.w2k.resources;
 
 import com.molecode.w2k.fetcher.ArticleFetcher;
+import com.molecode.w2k.fetcher.ArticleSource;
 import com.molecode.w2k.fetcher.evernote.EvernoteArticleFetcher;
 import com.molecode.w2k.fetcher.evernote.EvernoteClient;
 import com.molecode.w2k.fetcher.evernote.EvernoteClientManager;
@@ -55,7 +56,7 @@ public class EvernoteResource {
 			EvernoteClient evernoteClient = evernoteClientManager.getEvernoteClient(username);
 			if (evernoteClient != null) {
 				ArticleFetcher articleFetcher = new EvernoteArticleFetcher(username, noteGuid, evernoteClient);
-				articleTransferService.transferAndDeliverArticle(articleFetcher);
+				articleTransferService.transferAndDeliverArticle(ArticleSource.EVERNOTE, username, articleFetcher);
 				LOG.info("Successfully received and handed evernote webhook notification to ArticleTransferService: {}, {}", username, noteGuid);
 			}
 		}

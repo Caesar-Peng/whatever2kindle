@@ -1,6 +1,7 @@
 package com.molecode.w2k.resources;
 
 import com.molecode.w2k.fetcher.ArticleFetcher;
+import com.molecode.w2k.fetcher.ArticleSource;
 import com.molecode.w2k.fetcher.evernote.EvernoteArticleFetcher;
 import com.molecode.w2k.fetcher.evernote.EvernoteClient;
 import com.molecode.w2k.fetcher.evernote.EvernoteClientManager;
@@ -67,7 +68,7 @@ public class EvernoteResourceTest {
 
 		String responseJson = evernoteResource.receivedNotification(USERNAME, NOTE_GUID, NOTEBOOK_GUID, NOTIFICATION_REASON_CREATE_NOTE);
 		verify(evernoteClientManager).getEvernoteClient(USERNAME);
-		verify(articleTransferService).transferAndDeliverArticle(any(EvernoteArticleFetcher.class));
+		verify(articleTransferService).transferAndDeliverArticle(any(ArticleSource.class), eq(USERNAME), any(EvernoteArticleFetcher.class));
 
 		assertResponseJson(responseJson);
 	}
@@ -76,7 +77,7 @@ public class EvernoteResourceTest {
 	public void testReceivedNotificationOtherReason() {
 		String responseJson = evernoteResource.receivedNotification(USERNAME, NOTE_GUID, NOTEBOOK_GUID, NOTIFICATION_REASON_OTHERS);
 		verify(evernoteClientManager, never()).getEvernoteClient(USERNAME);
-		verify(articleTransferService, never()).transferAndDeliverArticle(any(EvernoteArticleFetcher.class));
+		verify(articleTransferService, never()).transferAndDeliverArticle(any(ArticleSource.class), eq(USERNAME), any(EvernoteArticleFetcher.class));
 		assertResponseJson(responseJson);
 	}
 
@@ -86,7 +87,7 @@ public class EvernoteResourceTest {
 
 		String responseJson = evernoteResource.receivedNotification(USERNAME, NOTE_GUID, NOTEBOOK_GUID, NOTIFICATION_REASON_CREATE_NOTE);
 		verify(evernoteClientManager).getEvernoteClient(USERNAME);
-		verify(articleTransferService, never()).transferAndDeliverArticle(any(EvernoteArticleFetcher.class));
+		verify(articleTransferService, never()).transferAndDeliverArticle(any(ArticleSource.class), eq(USERNAME), any(EvernoteArticleFetcher.class));
 		assertResponseJson(responseJson);
 
 	}

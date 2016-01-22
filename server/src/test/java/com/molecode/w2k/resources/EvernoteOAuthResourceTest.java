@@ -35,11 +35,11 @@ public class EvernoteOAuthResourceTest {
 	@Test
 	public void testRequestAuthorization() throws URISyntaxException {
 
-		when(oAuthService.generateOAuthRequestURI()).thenReturn(new URI(OAUTH_REQUEST_URI));
+		when(oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS)).thenReturn(new URI(OAUTH_REQUEST_URI));
 
-		Response response = evernoteOAuthResource.requestAuthorization();
+		Response response = evernoteOAuthResource.requestAuthorization(KINDLE_EMAIL_ADDRESS);
 
-		verify(oAuthService).generateOAuthRequestURI();
+		verify(oAuthService).generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS);
 
 		assertEquals(Response.Status.MOVED_PERMANENTLY.getStatusCode(), response.getStatus());
 		assertEquals("http://evernote.com/oauth", response.getHeaderString("Location"));

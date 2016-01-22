@@ -31,7 +31,7 @@ public class EvernoteClientManagerTest {
 		evernoteClientManager = new EvernoteClientManager();
 		evernoteClientManager.setUserCredentialDao(userCredentialDao);
 		evernoteClientManager.setEvernoteService(EvernoteService.SANDBOX);
-		userCredential = new UserCredential(USER_ID, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
+		userCredential = new UserCredential(USER_CREDENTIAL_ID, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
 	}
 
 	@Test

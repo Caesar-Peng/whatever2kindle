@@ -6,8 +6,15 @@
 	<include file="db-changelog.xml" />
 	
 	<changeSet id="W2K-TEST-1" author="YP" dbms="mysql">
+		<dropAllForeignKeyConstraints baseTableName="user_credential" />
 		<sql>
 			ALTER TABLE user_credential ENGINE=MEMORY;
+		</sql>
+	</changeSet>
+
+	<changeSet id="W2K-TEST-2" author="YP" dbms="mysql">
+		<sql>
+			ALTER TABLE user ENGINE=MEMORY;
 		</sql>
 	</changeSet>
 

@@ -7,7 +7,7 @@ import com.molecode.w2k.fetcher.ArticleSource;
  */
 public class UserCredential {
 
-	private final Integer userId;
+	private Integer credentialId;
 
 	private final ArticleSource articleSource;
 
@@ -15,8 +15,10 @@ public class UserCredential {
 
 	private final String password;
 
-	public UserCredential(Integer userId, ArticleSource articleSource, String username, String password) {
-		this.userId = userId;
+	private Integer userId;
+
+	public UserCredential(Integer credentialId, ArticleSource articleSource, String username, String password) {
+		this.credentialId = credentialId;
 		this.articleSource = articleSource;
 		this.username = username;
 		this.password = password;
@@ -24,6 +26,18 @@ public class UserCredential {
 
 	public Integer getUserId() {
 		return userId;
+	}
+
+	public Integer getCredentialId() {
+		return credentialId;
+	}
+
+	public void setCredentialId(Integer credentialId) {
+		this.credentialId = credentialId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	public ArticleSource getArticleSource() {

@@ -20,6 +20,7 @@
 		<property name="emailService">
 			<bean class="com.molecode.w2k.services.impl.EmailServiceImpl" />
 		</property>
+		<property name="userCredentialDao" ref="userCredentialDao" />
 	</bean>
 	
 	<import resource="spring-evernote-components.xml" />
