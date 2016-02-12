@@ -49,6 +49,7 @@ public class ArticleTransferServiceImplTest {
 		articleTransferService.setKindleGenerator(kindleGenerator);
 		articleTransferService.setEmailService(emailService);
 		articleTransferService.setUserCredentialDao(userCredentialDao);
+		articleTransferService.setExecutor(runnable -> {runnable.run();});
 
 		user = new User();
 		user.setKindleEmail(KINDLE_EMAIL_ADDRESS);

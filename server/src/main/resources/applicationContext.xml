@@ -21,6 +21,11 @@
 			<bean class="com.molecode.w2k.services.impl.EmailServiceImpl" />
 		</property>
 		<property name="userCredentialDao" ref="userCredentialDao" />
+		<property name="executor">
+			<bean class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
+				<constructor-arg value="8" />
+			</bean>
+		</property>
 	</bean>
 	
 	<import resource="spring-evernote-components.xml" />

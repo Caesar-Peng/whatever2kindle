@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.File;
+import java.util.concurrent.Executor;
 
 /**
  * Created by YP on 2015-12-28.
@@ -25,6 +26,8 @@ public class ArticleTransferServiceImpl implements ArticleTransferService {
 	private EmailService emailService;
 
 	private UserCredentialDao userCredentialDao;
+
+	private Executor executor;
 
 	@Required
 	public void setKindleGenerator(KindleGenerator kindleGenerator) {
@@ -41,19 +44,26 @@ public class ArticleTransferServiceImpl implements ArticleTransferService {
 		this.userCredentialDao = userCredentialDao;
 	}
 
+	@Required
+	public void setExecutor(Executor executor) {
+		this.executor = executor;
+	}
+
 	@Override
 	public void transferAndDeliverArticle(ArticleSource articleSource, String username, ArticleFetcher articleFetcher) {
-		User user = userCredentialDao.queryUserByCredential(articleSource, username);
-		if (user != null) {
-			File originalFile = articleFetcher.fetchArticle(user.getW2kTag());
-			if (originalFile != null) {
-				LOG.info("Successfully fetched article content with ArticleFetcher.");
-				File kindleFile = kindleGenerator.generate(originalFile);
-				if (kindleFile != null) {
-					emailService.deliverArticle(user.getKindleEmail(), kindleFile);
+		executor.execute(() -> {
+			User user = userCredentialDao.queryUserByCredential(articleSource, username);
+			if (user != null) {
+				File originalFile = articleFetcher.fetchArticle(user.getW2kTag());
+				if (originalFile != null) {
+					LOG.info("Successfully fetched article content with ArticleFetcher.");
+					File kindleFile = kindleGenerator.generate(originalFile);
+					if (kindleFile != null) {
+						emailService.deliverArticle(user.getKindleEmail(), kindleFile);
+					}
 				}
 			}
-		}
+		});
 	}
 
 }
