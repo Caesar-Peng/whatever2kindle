@@ -1,6 +1,8 @@
 package com.molecode.w2k.services.impl;
 
 import com.molecode.w2k.services.EmailService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -24,6 +26,8 @@ import java.util.Properties;
  * Created by YP on 2016-01-12.
  */
 public class EmailServiceImpl implements EmailService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(EmailServiceImpl.class);
 
 	@Override
 	public void deliverArticle(String kindleEmail, File kindleFile) {
@@ -50,9 +54,9 @@ public class EmailServiceImpl implements EmailService {
 			Transport.send(message);
 
 		} catch (MessagingException e) {
-			e.printStackTrace();
+			LOG.warn("Failed to send email message.", e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			LOG.warn("Unsupported encoding", e);
 		}
 
 	}

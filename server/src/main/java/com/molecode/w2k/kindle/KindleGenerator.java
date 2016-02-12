@@ -27,9 +27,9 @@ public class KindleGenerator {
 				LOG.warn("Failed to generate mobi file: {}" + originalFilePath);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.warn("Failed to execute the kindlegen command", e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			LOG.warn("Failed to execute the kindlegen command", e);
 		}
 		return kindleFile;
 	}
