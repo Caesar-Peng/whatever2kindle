@@ -9,7 +9,6 @@ import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.type.Note;
 import com.evernote.thrift.TException;
-import com.mchange.v1.util.CollectionUtils;
 import com.syncthemall.enml4j.ENMLProcessor;
 
 import javax.xml.stream.XMLStreamException;
