@@ -4,6 +4,7 @@ import com.molecode.w2k.daos.UserCredentialDao;
 import com.molecode.w2k.fetcher.ArticleFetcher;
 import com.molecode.w2k.fetcher.ArticleSource;
 import com.molecode.w2k.kindle.KindleGenerator;
+import com.molecode.w2k.models.User;
 import com.molecode.w2k.services.ArticleTransferService;
 import com.molecode.w2k.services.EmailService;
 import org.slf4j.Logger;
@@ -42,14 +43,14 @@ public class ArticleTransferServiceImpl implements ArticleTransferService {
 
 	@Override
 	public void transferAndDeliverArticle(ArticleSource articleSource, String username, ArticleFetcher articleFetcher) {
-		File originalFile = articleFetcher.fetchArticle();
-		if (originalFile != null) {
-			LOG.info("Successfully fetched article content with ArticleFetcher.");
-			File kindleFile = kindleGenerator.generate(originalFile);
-			if (kindleFile != null) {
-				String kindleEmail = userCredentialDao.queryKindleEmail(articleSource, username);
-				if (kindleEmail != null) {
-					emailService.deliverArticle(kindleEmail, kindleFile);
+		User user = userCredentialDao.queryUserByCredential(articleSource, username);
+		if (user != null) {
+			File originalFile = articleFetcher.fetchArticle(user.getW2kTag());
+			if (originalFile != null) {
+				LOG.info("Successfully fetched article content with ArticleFetcher.");
+				File kindleFile = kindleGenerator.generate(originalFile);
+				if (kindleFile != null) {
+					emailService.deliverArticle(user.getKindleEmail(), kindleFile);
 				}
 			}
 		}

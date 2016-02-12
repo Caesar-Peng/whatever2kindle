@@ -19,5 +19,6 @@ public final class TestConstants {
 	public static final String OAUTH_VERIFIER_VALUE = "oauth_verifier_value";
 
 	public static final String KINDLE_EMAIL_ADDRESS = "abc@kindle.com";
+	public static final String W2K_TAG = "tag for kindle";
 
 }

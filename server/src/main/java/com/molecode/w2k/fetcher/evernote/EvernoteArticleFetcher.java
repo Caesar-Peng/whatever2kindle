@@ -22,7 +22,7 @@ public class EvernoteArticleFetcher implements ArticleFetcher {
 	}
 
 	@Override
-	public File fetchArticle() {
-		return  evernoteClient.fetchNoteContent(noteGuid);
+	public File fetchArticle(String w2kTag) {
+		return  evernoteClient.fetchNoteContent(noteGuid, w2kTag);
 	}
 }

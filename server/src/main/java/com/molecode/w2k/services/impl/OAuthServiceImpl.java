@@ -1,6 +1,5 @@
 package com.molecode.w2k.services.impl;
 
-import com.github.scribejava.core.model.Token;
 import com.molecode.w2k.daos.UserCredentialDao;
 import com.molecode.w2k.models.User;
 import com.molecode.w2k.models.UserCredential;
@@ -11,6 +10,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by YP on 2016-01-06.
@@ -21,7 +22,7 @@ public class OAuthServiceImpl implements OAuthService {
 
 	private OAuthAssistant oAuthAssistant;
 
-	private TimedExpiringCache<String, String> tokenUserIdCache;
+	private TimedExpiringCache<String, User> tokenUserIdCache;
 
 	private long requestTokenExpireTime = 10 * 60 * 1000;
 
@@ -40,10 +41,13 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	@Override
-	public URI generateOAuthRequestURI(String kindleEmail) {
+	public URI generateOAuthRequestURI(String kindleEmail, String w2kTag) {
 		Pair<String, URI> authorizeTokenPair = oAuthAssistant.generateAuthorizeURI();
 		if (authorizeTokenPair != null) {
-			tokenUserIdCache.put(authorizeTokenPair.getKey(), kindleEmail);
+			User user = new User();
+			user.setKindleEmail(kindleEmail);
+			user.setW2kTag(w2kTag);
+			tokenUserIdCache.put(authorizeTokenPair.getKey(), user);
 			return authorizeTokenPair.getValue();
 		}
 		return null;
@@ -51,13 +55,11 @@ public class OAuthServiceImpl implements OAuthService {
 
 	@Override
 	public AuthorizationResult retrieveAndStoreAccessToken(String temporaryToken, String verifierValue) {
-		String kindleEmail = tokenUserIdCache.get(temporaryToken);
-		if (kindleEmail != null) {
+		User cachedUser = tokenUserIdCache.get(temporaryToken);
+		if (cachedUser != null) {
 			UserCredential userCredential = oAuthAssistant.retrieveCredential(temporaryToken, verifierValue);
 			if (userCredential != null) {
-				User user = new User();
-				user.setKindleEmail(kindleEmail);
-				Integer userId = userCredentialDao.insertUserOrSelectUserId(user);
+				Integer userId = userCredentialDao.insertUserOrSelectUserId(cachedUser);
 				userCredential.setUserId(userId);
 				try {
 					userCredentialDao.insertUserCredential(userCredential);

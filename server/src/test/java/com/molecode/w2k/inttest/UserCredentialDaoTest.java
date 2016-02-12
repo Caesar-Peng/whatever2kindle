@@ -49,17 +49,18 @@ public class UserCredentialDaoTest {
 
 	@Test
 	public void testInsertUserOrSelectUserIdForInsert() {
-		Integer userId = preInsertUser(KINDLE_EMAIL_ADDRESS);
+		Integer userId = preInsertUser(KINDLE_EMAIL_ADDRESS, W2K_TAG);
 
 		int recordCount = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "user",
-				"user_id = " + userId + " AND kindle_email = '" + KINDLE_EMAIL_ADDRESS + "'");
+				"user_id = " + userId + " AND kindle_email = '" + KINDLE_EMAIL_ADDRESS + "' AND w2k_tag='" + W2K_TAG + "'");
 
 		assertEquals(1, recordCount);
 	}
 
-	private Integer preInsertUser(String kindleEmail) {
+	private Integer preInsertUser(String kindleEmail, String w2kTag) {
 		User user = new User();
 		user.setKindleEmail(kindleEmail);
+		user.setW2kTag(w2kTag);
 
 		Integer userId = userCredentialDao.insertUserOrSelectUserId(user);
 		assertNotNull(user.getId());
@@ -70,7 +71,7 @@ public class UserCredentialDaoTest {
 
 	@Test
 	public void testInsertUserOrSelectUserIdForSelect() {
-		Integer userId = preInsertUser(KINDLE_EMAIL_ADDRESS);
+		Integer userId = preInsertUser(KINDLE_EMAIL_ADDRESS, W2K_TAG);
 		User user = new User();
 		user.setKindleEmail(KINDLE_EMAIL_ADDRESS);
 
@@ -82,7 +83,7 @@ public class UserCredentialDaoTest {
 
 	@Test
 	public void testInsertUserCredential() throws Exception {
-		UserCredential userCredential = preInsertUserCredential(KINDLE_EMAIL_ADDRESS, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
+		UserCredential userCredential = preInsertUserCredential(KINDLE_EMAIL_ADDRESS, W2K_TAG, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
 
 		int recordCount = JdbcTestUtils.countRowsInTableWhere(jdbcTemplate,
 				"user_credential", "credential_id = " + userCredential.getCredentialId() + " AND article_source = '" + ArticleSource.EVERNOTE.name()
@@ -92,9 +93,9 @@ public class UserCredentialDaoTest {
 		assertEquals(1, recordCount);
 	}
 
-	private UserCredential preInsertUserCredential(String kindleEmail, ArticleSource articleSource, String username, String password)
+	private UserCredential preInsertUserCredential(String kindleEmail, String w2kTag, ArticleSource articleSource, String username, String password)
 			throws Exception {
-		Integer userId = preInsertUser(kindleEmail);
+		Integer userId = preInsertUser(kindleEmail, w2kTag);
 
 		UserCredential userCredential = new UserCredential(null, articleSource, username, password);
 		userCredential.setUserId(userId);
@@ -105,7 +106,7 @@ public class UserCredentialDaoTest {
 
 	@Test
 	public void testQueryUserCredential() throws Exception {
-		UserCredential userCredential = preInsertUserCredential(KINDLE_EMAIL_ADDRESS, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
+		UserCredential userCredential = preInsertUserCredential(KINDLE_EMAIL_ADDRESS, W2K_TAG, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
 
 		UserCredential userCredentialQueried = userCredentialDao.loadUserCredential(ArticleSource.EVERNOTE, USERNAME);
 
@@ -118,13 +119,21 @@ public class UserCredentialDaoTest {
 	}
 
 	@Test
-	public void testQueryKindleEmail() throws Exception {
-		preInsertUserCredential(KINDLE_EMAIL_ADDRESS, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
+	public void testQueryUserByCredential() throws Exception {
+		preInsertUserCredential(KINDLE_EMAIL_ADDRESS, W2K_TAG, ArticleSource.EVERNOTE, USERNAME, PASSWORD);
 
-		String kindleEmail = userCredentialDao.queryKindleEmail(ArticleSource.EVERNOTE, USERNAME);
+		User user = userCredentialDao.queryUserByCredential(ArticleSource.EVERNOTE, USERNAME);
 
-		assertEquals(KINDLE_EMAIL_ADDRESS, kindleEmail);
+		assertNotNull(user);
+		assertEquals(KINDLE_EMAIL_ADDRESS, user.getKindleEmail());
+		assertEquals(W2K_TAG, user.getW2kTag());
+	}
 
+	@Test
+	public void testQueryUserByCredentialUserNotExist() {
+		User user = userCredentialDao.queryUserByCredential(ArticleSource.EVERNOTE, USERNAME);
+
+		assertNull(user);
 	}
 
 }

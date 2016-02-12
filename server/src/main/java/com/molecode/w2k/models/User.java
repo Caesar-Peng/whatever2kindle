@@ -9,6 +9,8 @@ public class User {
 
 	private String kindleEmail;
 
+	private String w2kTag;
+
 	public Integer getId() {
 		return id;
 	}
@@ -23,5 +25,13 @@ public class User {
 
 	public void setKindleEmail(String kindleEmail) {
 		this.kindleEmail = kindleEmail;
+	}
+
+	public String getW2kTag() {
+		return w2kTag;
+	}
+
+	public void setW2kTag(String w2kTag) {
+		this.w2kTag = w2kTag;
 	}
 }

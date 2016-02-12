@@ -9,6 +9,7 @@ import com.evernote.edam.error.EDAMSystemException;
 import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.type.Note;
 import com.evernote.thrift.TException;
+import com.mchange.v1.util.CollectionUtils;
 import com.syncthemall.enml4j.ENMLProcessor;
 
 import javax.xml.stream.XMLStreamException;
@@ -16,7 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Created by YP on 2015-12-29.
@@ -45,12 +46,16 @@ public class EvernoteClient {
 		this.enmlProcessor = enmlProcessor;
 	}
 
-	public File fetchNoteContent(String noteGuid) {
+	public File fetchNoteContent(String noteGuid, String w2kTag) {
 		File htmlFile = null;
 		try {
-			Note note = noteStoreClient.getNote(noteGuid, true, true, false, false);
-			htmlFile = new File(outputDir + note.getGuid() + ".html");
-			enmlProcessor.noteToInlineHTML(note, new FileOutputStream(htmlFile)).close();
+			List<String> tagNames = noteStoreClient.getNoteTagNames(noteGuid);
+			if (tagNames.contains(w2kTag)) {
+				Note note = noteStoreClient.getNote(noteGuid, true, true, false, false);
+				note.setContent(noteStoreClient.getNoteContent(noteGuid));
+				htmlFile = new File(outputDir + note.getGuid() + ".html");
+				enmlProcessor.noteToInlineHTML(note, new FileOutputStream(htmlFile)).close();
+			}
 		} catch (EDAMUserException e) {
 			e.printStackTrace();
 		} catch (EDAMSystemException e) {

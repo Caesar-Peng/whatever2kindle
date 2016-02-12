@@ -45,8 +45,8 @@ public class EvernoteOAuthResource {
 
 	@POST
 	@Path("/request_authorization")
-	public Response requestAuthorization(@FormParam("kindle_email") String kindleEmail) {
-		URI authorizationUrl = oAuthService.generateOAuthRequestURI(kindleEmail);
+	public Response requestAuthorization(@FormParam("kindle_email") String kindleEmail, @FormParam("w2k_tag") String w2kTag) {
+		URI authorizationUrl = oAuthService.generateOAuthRequestURI(kindleEmail, w2kTag);
 		return Response.seeOther(authorizationUrl).status(Response.Status.MOVED_PERMANENTLY).build();
 	}
 

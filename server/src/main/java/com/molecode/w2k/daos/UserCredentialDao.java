@@ -14,5 +14,5 @@ public interface UserCredentialDao {
 
 	Integer insertUserOrSelectUserId(User user);
 
-	String queryKindleEmail(ArticleSource articleSource, String username);
+	User queryUserByCredential(ArticleSource articleSource, String username);
 }

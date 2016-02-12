@@ -34,22 +34,22 @@ public class EvernoteArticleFetcherTest {
 	public void testFetchArticleSucceed() throws IOException {
 		File noteFile = new File("~/note_file");
 
-		when(evernoteClient.fetchNoteContent(NOTE_GUID)).thenReturn(noteFile);
+		when(evernoteClient.fetchNoteContent(NOTE_GUID, W2K_TAG)).thenReturn(noteFile);
 
-		File returnedFile = evernoteArticleFetcher.fetchArticle();
+		File returnedFile = evernoteArticleFetcher.fetchArticle(W2K_TAG);
 
-		verify(evernoteClient).fetchNoteContent(NOTE_GUID);
+		verify(evernoteClient).fetchNoteContent(NOTE_GUID, W2K_TAG);
 
 		assertEquals(noteFile, returnedFile);
 	}
 
 	@Test
 	public void testFetchArticleFailedDueToNullContent() throws IOException {
-		when(evernoteClient.fetchNoteContent(NOTE_GUID)).thenReturn(null);
+		when(evernoteClient.fetchNoteContent(NOTE_GUID, W2K_TAG)).thenReturn(null);
 
-		File returnedFile = evernoteArticleFetcher.fetchArticle();
+		File returnedFile = evernoteArticleFetcher.fetchArticle(W2K_TAG);
 
-		verify(evernoteClient).fetchNoteContent(NOTE_GUID);
+		verify(evernoteClient).fetchNoteContent(NOTE_GUID, W2K_TAG);
 		assertNull(returnedFile);
 	}
 

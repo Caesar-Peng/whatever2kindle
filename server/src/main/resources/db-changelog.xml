@@ -44,4 +44,10 @@
 		<addUniqueConstraint tableName="user_credential" columnNames="article_source, username, ref_user_id" constraintName="user_credential_unique_idx" />
 	</changeSet>
 
+	<changeSet id="W2K-3" author="YP" dbms="mysql">
+		<addColumn tableName="user">
+			<column name="w2k_tag" type="VARCHAR(50)"/>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

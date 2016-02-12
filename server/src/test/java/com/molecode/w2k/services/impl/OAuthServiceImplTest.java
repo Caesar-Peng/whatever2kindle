@@ -45,7 +45,7 @@ public class OAuthServiceImplTest {
 	public void testGenerateOAuthRequestURI() throws URISyntaxException {
 		when(oAuthAssistant.generateAuthorizeURI()).thenReturn(Pair.of(OAUTH_TEMPORARY_TOKEN, new URI(OAUTH_REQUEST_URI)));
 
-		URI requestURI = oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS);
+		URI requestURI = oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS, W2K_TAG);
 
 		verify(oAuthAssistant).generateAuthorizeURI();
 		assertEquals(OAUTH_REQUEST_URI, requestURI.toString());
@@ -53,11 +53,10 @@ public class OAuthServiceImplTest {
 
 	@Test
 	public void testGenerateOAuthRequestURIFailedToGenerateURI() {
-		ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-		when(userCredentialDao.insertUserOrSelectUserId(userCaptor.capture())).thenReturn(USER_ID);
+		when(userCredentialDao.insertUserOrSelectUserId(any(User.class))).thenReturn(USER_ID);
 		when(oAuthAssistant.generateAuthorizeURI()).thenReturn(null);
 
-		URI requestURI = oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS);
+		URI requestURI = oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS, W2K_TAG);
 
 		verify(oAuthAssistant).generateAuthorizeURI();
 		assertNull(requestURI);
@@ -79,6 +78,7 @@ public class OAuthServiceImplTest {
 
 		User user = userArgumentCaptor.getValue();
 		assertEquals(KINDLE_EMAIL_ADDRESS, user.getKindleEmail());
+		assertEquals(W2K_TAG, user.getW2kTag());
 		assertEquals(USER_ID, userCredential.getUserId());
 		assertTrue(result.isSucceed());
 		assertNull(result.getMessage());
@@ -87,7 +87,7 @@ public class OAuthServiceImplTest {
 	private void generateOAuthRequestURIForRetrieveCredential() throws URISyntaxException {
 		URI authorizationURI = new URI(OAUTH_REQUEST_URI);
 		when(oAuthAssistant.generateAuthorizeURI()).thenReturn(Pair.of(OAUTH_TEMPORARY_TOKEN, authorizationURI));
-		oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS);
+		oAuthService.generateOAuthRequestURI(KINDLE_EMAIL_ADDRESS, W2K_TAG);
 	}
 
 	@Test
