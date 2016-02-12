@@ -19,6 +19,8 @@ import static com.molecode.w2k.TestConstants.*;
  */
 public class EvernoteOAuthResourceTest {
 
+	private static final String SERVICE_HOST = "http://service.host";
+
 	@Mock
 	private OAuthService oAuthService;
 
@@ -29,7 +31,7 @@ public class EvernoteOAuthResourceTest {
 		MockitoAnnotations.initMocks(this);
 		evernoteOAuthResource = new EvernoteOAuthResource();
 		evernoteOAuthResource.setOAuthService(oAuthService);
-
+		evernoteOAuthResource.setServiceHost(SERVICE_HOST);
 	}
 
 	@Test
@@ -55,7 +57,7 @@ public class EvernoteOAuthResourceTest {
 		verify(oAuthService).retrieveAndStoreAccessToken(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE);
 
 		assertEquals(Response.Status.MOVED_PERMANENTLY.getStatusCode(), response.getStatus());
-		assertEquals("/w2k/oauth_result.html#succeed=true", response.getHeaderString("Location"));
+		assertEquals(SERVICE_HOST + "/oauth_result.html#succeed=true", response.getHeaderString("Location"));
 
 	}
 
@@ -69,7 +71,7 @@ public class EvernoteOAuthResourceTest {
 		verify(oAuthService).retrieveAndStoreAccessToken(OAUTH_TEMPORARY_TOKEN, OAUTH_VERIFIER_VALUE);
 
 		assertEquals(Response.Status.MOVED_PERMANENTLY.getStatusCode(), response.getStatus());
-		assertEquals("/w2k/oauth_result.html#succeed=false&message=message", response.getHeaderString("Location"));
+		assertEquals(SERVICE_HOST + "/oauth_result.html#succeed=false&message=message", response.getHeaderString("Location"));
 
 	}
 

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.FormParam;
@@ -26,12 +27,20 @@ public class EvernoteOAuthResource {
 
 	private OAuthService oAuthService;
 
+	private String serviceHost;
+
 	private static final Logger LOG = LoggerFactory.getLogger(EvernoteOAuthResource.class);
 
 	@Autowired
 	@Required
 	public void setOAuthService(OAuthService oAuthService) {
 		this.oAuthService = oAuthService;
+	}
+
+	@Required
+	@Value("${service.host}")
+	public void setServiceHost(String serviceHost) {
+		this.serviceHost = serviceHost;
 	}
 
 	@POST
@@ -50,7 +59,7 @@ public class EvernoteOAuthResource {
 	}
 
 	private Response buildResponseWithAuthorizationResult(OAuthService.AuthorizationResult result) {
-		StringBuilder redirectURIBuilder = new StringBuilder("/w2k/oauth_result.html#");
+		StringBuilder redirectURIBuilder = new StringBuilder(serviceHost).append("/oauth_result.html#");
 		redirectURIBuilder.append("succeed=").append(result.isSucceed());
 		if (!result.isSucceed()) {
 			redirectURIBuilder.append("&message=").append(result.getMessage());
