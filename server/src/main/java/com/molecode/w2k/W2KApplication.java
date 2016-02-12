@@ -19,7 +19,7 @@ public class W2KApplication {
 		Properties w2kProperties = new Properties();
 		w2kProperties.load(W2KApplication.class.getResourceAsStream("/w2k.properties"));
 		int port = Integer.parseInt(w2kProperties.getProperty("server.port", "8080"));
-		String contextPath = w2kProperties.getProperty("server.contextPath", "/w2k");
+		String contextPath = w2kProperties.getProperty("server.contextPath", "/rest");
 
 		Server server = new Server(port);
 		WebAppContext context = new WebAppContext();
