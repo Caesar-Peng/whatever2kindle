@@ -53,6 +53,8 @@ public class EmailServiceImpl implements EmailService {
 
 			Transport.send(message);
 
+			LOG.info("Mobi file({}) has been sent to the kindle device account {}.", kindleFile, kindleEmail);
+
 		} catch (MessagingException e) {
 			LOG.warn("Failed to send email message.", e);
 		} catch (UnsupportedEncodingException e) {
