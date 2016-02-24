@@ -10,6 +10,8 @@ import com.evernote.edam.error.EDAMUserException;
 import com.evernote.edam.type.Note;
 import com.evernote.thrift.TException;
 import com.syncthemall.enml4j.ENMLProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -23,6 +25,8 @@ import java.util.List;
  */
 public class EvernoteClient {
 
+	private static final Logger LOG = LoggerFactory.getLogger(EvernoteClient.class);
+
 	private NoteStoreClient noteStoreClient;
 
 	private final String outputDir;
@@ -34,12 +38,8 @@ public class EvernoteClient {
 		ClientFactory clientFactory = new ClientFactory(evernoteAuth);
 		try {
 			this.noteStoreClient = clientFactory.createNoteStoreClient();
-		} catch (EDAMUserException e) {
-			e.printStackTrace();
-		} catch (EDAMSystemException e) {
-			e.printStackTrace();
-		} catch (TException e) {
-			e.printStackTrace();
+		} catch (EDAMUserException | EDAMSystemException | TException e) {
+			LOG.info("Failed to create NoteClientStore.", e);
 		}
 		this.outputDir = outputDir;
 		this.enmlProcessor = enmlProcessor;
@@ -54,21 +54,16 @@ public class EvernoteClient {
 				note.setContent(noteStoreClient.getNoteContent(noteGuid));
 				htmlFile = new File(outputDir + note.getGuid() + ".html");
 				enmlProcessor.noteToInlineHTML(note, new FileOutputStream(htmlFile)).close();
+			} else {
+				LOG.info("Note tag not matched. Tag names: {}, w2k tag name: {}", tagNames, w2kTag);
 			}
-		} catch (EDAMUserException e) {
+		} catch (EDAMUserException | EDAMSystemException | EDAMNotFoundException | TException e) {
 			e.printStackTrace();
-		} catch (EDAMSystemException e) {
-			e.printStackTrace();
-		} catch (EDAMNotFoundException e) {
-			e.printStackTrace();
-		} catch (TException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			LOG.warn("Access Evernote API failed.", e);
 		} catch (XMLStreamException e) {
-			e.printStackTrace();
+			LOG.warn("Failed to convert enml file to html file.", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.warn("Failed to write the html file.", e);
 		}
 		return htmlFile;
 	}

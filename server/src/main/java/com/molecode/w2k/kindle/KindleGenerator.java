@@ -21,15 +21,15 @@ public class KindleGenerator {
 			if (exitValue < 2) {
 				kindleFile = new File(originalFilePath.substring(0, originalFilePath.lastIndexOf('.')) + ".mobi");
 				if (exitValue == 1) {
-					LOG.info("Mobi file generated with warnings: {}" + originalFilePath);
+					LOG.info("Mobi file generated with warnings: {}", originalFilePath);
 				}
 			} else {
-				LOG.warn("Failed to generate mobi file: {}" + originalFilePath);
+				LOG.warn("Failed to generate mobi file: {}", originalFilePath);
 			}
 		} catch (IOException e) {
-			LOG.warn("Failed to execute the kindlegen command", e);
+			LOG.warn("Failed to execute the kindlegen command.", e);
 		} catch (InterruptedException e) {
-			LOG.warn("Failed to execute the kindlegen command", e);
+			LOG.warn("Failed to execute the kindlegen command.", e);
 		}
 		return kindleFile;
 	}
