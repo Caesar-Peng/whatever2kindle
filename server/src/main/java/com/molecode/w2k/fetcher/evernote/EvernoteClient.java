@@ -49,7 +49,7 @@ public class EvernoteClient {
 		File htmlFile = null;
 		try {
 			List<String> tagNames = noteStoreClient.getNoteTagNames(noteGuid);
-			if (tagNames.contains(w2kTag)) {
+			if (tagNames.contains(w2kTag.toLowerCase())) {
 				Note note = noteStoreClient.getNote(noteGuid, true, true, false, false);
 				note.setContent(noteStoreClient.getNoteContent(noteGuid));
 				htmlFile = new File(outputDir + note.getGuid() + ".html");
