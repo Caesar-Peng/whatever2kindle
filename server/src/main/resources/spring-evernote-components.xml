@@ -5,21 +5,21 @@
 
 	<bean id="evernoteClientManager" class="com.molecode.w2k.fetcher.evernote.EvernoteClientManager">
 		<property name="userCredentialDao" ref="userCredentialDao" />
-		<property name="evernoteService" value="SANDBOX" />
+		<property name="evernoteService" value="${api.evernote.environment}" />
 	</bean>
 
 	<bean id="evernoteOAuthService" class="com.molecode.w2k.services.impl.OAuthServiceImpl">
 		<property name="oAuthAssistant">
 			<bean class="com.molecode.w2k.oauth.OAuthAssistantScribeImpl" init-method="init">
-				<property name="apiKey" value="${api.evernote.apiKey}" />
-				<property name="apiSecret" value="${api.evernote.apiSecret}" />
-				<property name="callback" value="${api.evernote.callback}" />
+				<property name="apiKey" value="${api.evernote.oauth.apiKey}" />
+				<property name="apiSecret" value="${api.evernote.oauth.apiSecret}" />
+				<property name="callback" value="${api.evernote.oauth.callback}" />
 				<property name="apiClass">
-					<value type="java.lang.Class">${api.evernote.provider_class}</value>
+					<value type="java.lang.Class">${api.evernote.oauth.provider_class}</value>
 				</property>
 				<property name="responseParser">
 					<bean class="com.molecode.w2k.oauth.EvernoteOAuthResponseParser">
-						<property name="evernoteService" value="SANDBOX" />
+						<property name="evernoteService" value="${api.evernote.environment}" />
 					</bean>
 				</property>
 			</bean>
